@@ -1,5 +1,10 @@
 ⛵ 데이터 EDA 관련 저장소입니다.
 
+데이터 메타데이터
+-----
+![image](https://github.com/user-attachments/assets/0f036c66-dac3-40ed-b4e3-bf9465e253f9)
+
+
 데이터 이상치 탐색
 -----
 ![image](https://github.com/user-attachments/assets/b3ae32b8-56b9-4be6-8c22-ae0a81e9ac4d)
