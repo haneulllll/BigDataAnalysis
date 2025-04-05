@@ -17,4 +17,6 @@
 
 Box area 기반 선박 경로 시각화
 -----
+![image](https://github.com/user-attachments/assets/67134f84-6486-4cfc-aa85-c7349f43f283)
+
 ![image](https://github.com/user-attachments/assets/edb1a181-1f3e-4dc4-b256-493b18cf0e51)
