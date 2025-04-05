@@ -9,3 +9,5 @@ create index idx_timestamp_2020_05 on ais_2020_05 (timestamp ASC)
 create index idx_timestamp_2020_06 on ais_2020_06 (timestamp ASC)
 
 create index idx_timestamp_2020_07 on ais_2020_07 (timestamp ASC)
+
+CREATE INDEX idx_ais_mmsi_timestamp ON ais_2020_02 (mmsi, timestamp ASC);
