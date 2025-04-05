@@ -13,3 +13,8 @@
 10분별 SOG 추세
 -----
 ![image](https://github.com/user-attachments/assets/ad62fd68-0e98-48eb-8e4b-050be0f163f3)
+
+
+Box area 기반 EDA
+-----
+![image](https://github.com/user-attachments/assets/edb1a181-1f3e-4dc4-b256-493b18cf0e51)
