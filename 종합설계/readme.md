@@ -23,3 +23,8 @@
 
 ![컨셉시트1](https://github.com/user-attachments/assets/407cf6a8-620a-4268-ae40-ee0e52e06619)
 ![컨셉시트2](https://github.com/user-attachments/assets/a2fb0f2f-8b10-46d9-be43-960b9625a0a5)
+
+시퀀스다이어그램
+-----
+
+<img width="840" alt="시퀀스다이어그램" src="https://github.com/user-attachments/assets/d2769789-8084-44a5-9a6a-1936328883e7" />
