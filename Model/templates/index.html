@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>선박 경로 예측 시스템</title>
+
+    <!-- Leaflet 지도 스타일시트 로드 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- 기본 스타일 정의 -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #input-panel {
+            width: 300px;
+            padding: 20px;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        #map {
+            flex: 1; /* 남은 공간 전체를 차지 */
+        }
+        #result-panel {
+            width: 250px;
+            padding: 20px;
+            box-sizing: border-box;
+            border-left: 1px solid #ddd;
+            background: #f0f0f0;
+        }
+        input[type=number] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 입력 패널 -->
+    <div id="input-panel">
+        <h2>입력 패널</h2>
+        <!-- 선박 현재 상태 및 목적지 입력 -->
+        <label>현재 위도: <input id="current_lat" type="number" step="0.0001" value="37.5665"/></label><br/>
+        <label>현재 경도: <input id="current_lon" type="number" step="0.0001" value="126.9780"/></label><br/>
+        <label>SOG (속력): <input id="sog" type="number" step="0.1" value="10"/></label><br/>
+        <label>COG (방향): <input id="cog" type="number" step="1" value="90"/></label><br/>
+        <label>목적지 위도: <input id="dest_lat" type="number" step="0.0001" value="33.4996"/></label><br/>
+        <label>목적지 경도: <input id="dest_lon" type="number" step="0.0001" value="126.5312"/></label><br/>
+        <!-- 예측 버튼 -->
+        <button id="predictBtn">경로 예측</button>
+    </div>
+
+    <!-- 지도 영역 -->
+    <div id="map"></div>
+
+    <!-- 예측 결과 표시 영역 -->
+    <div id="result-panel">
+        <h2>예측 결과</h2>
+        <p>도착 예상 시간 (ETA): <span id="eta">-</span></p>
+        <p>추천 SOG: <span id="recommended_sog">-</span></p>
+        <p>추천 COG: <span id="recommended_cog">-</span></p>
+    </div>
+
+    <!-- Leaflet 지도 JS 로드 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 지도 초기화: 서울을 기준으로 초기 뷰 설정
+        const map = L.map('map').setView([37.5665, 126.9780], 7);
+
+        // 타일 레이어 추가 (오픈스트리트맵 사용)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // 경로 및 마커를 저장할 전역 변수
+        let routeLine;
+        let currentMarker;
+        let destMarker;
+
+        // 기존 경로 및 마커를 지도에서 제거하는 함수
+        function clearRoute() {
+            if (routeLine) {
+                map.removeLayer(routeLine);
+                routeLine = null;
+            }
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+            if (destMarker) {
+                map.removeLayer(destMarker);
+                destMarker = null;
+            }
+        }
+
+        // [경로 예측] 버튼 클릭 이벤트 처리
+        document.getElementById('predictBtn').addEventListener('click', () => {
+            // 입력값 가져오기 및 숫자형으로 변환
+            const current_lat = parseFloat(document.getElementById('current_lat').value);
+            const current_lon = parseFloat(document.getElementById('current_lon').value);
+            const sog = parseFloat(document.getElementById('sog').value);
+            const cog = parseFloat(document.getElementById('cog').value);
+            const dest_lat = parseFloat(document.getElementById('dest_lat').value);
+            const dest_lon = parseFloat(document.getElementById('dest_lon').value);
+
+            // 백엔드로 예측 요청 전송
+            fetch('/api/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    current_lat, current_lon, sog, cog, dest_lat, dest_lon
+                })
+            })
+            .then(response => response.json()) // 결과 JSON 파싱
+            .then(data => {
+                clearRoute(); // 기존 경로 제거
+
+                // 현재 위치 마커 표시
+                currentMarker = L.marker([current_lat, current_lon]).addTo(map).bindPopup("현재 위치").openPopup();
+
+                // 목적지 마커 표시
+                destMarker = L.marker([dest_lat, dest_lon]).addTo(map).bindPopup("목적지").openPopup();
+
+                // 예측된 경로 선 표시
+                routeLine = L.polyline(data.route, {color: 'blue'}).addTo(map);
+
+                // 지도 중심을 현재 위치로 이동
+                map.setView([current_lat, current_lon], 7);
+
+                // 예측 결과를 결과 패널에 표시
+                document.getElementById('eta').textContent = data.eta;
+                document.getElementById('recommended_sog').textContent = data.recommended_sog.toFixed(2);
+                document.getElementById('recommended_cog').textContent = data.recommended_cog.toFixed(1);
+            })
+            .catch(err => {
+                alert('예측 요청 중 오류가 발생했습니다.');
+                console.error(err);
+            });
+        });
+    </script>
+</body>
+</html>
