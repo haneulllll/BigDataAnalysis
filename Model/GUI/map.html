@@ -1,0 +1,63 @@
+<!-- map.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ship Route</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="qwebchannel.js"></script>
+    <style>
+        #map { height: 100vh; width: 100vw; margin:0; padding:0; }
+        html, body { height:100%; margin:0; padding:0; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    var map = L.map('map').setView([36, 127], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var routeLayer = null;
+    var startMarker = null;
+    var currentMarker = null;
+    var vessel = null;
+    var fre_route = null;
+    var marker = null;
+
+    new QWebChannel(qt.webChannelTransport, function(channel) {
+        window.bridge = channel.objects.bridge;
+    });
+
+    function updateRoute(coords) {
+        if(routeLayer) map.removeLayer(routeLayer);
+        if(startMarker) map.removeLayer(startMarker);
+        if(currentMarker) map.removeLayer(currentMarker);
+
+        routeLayer = L.polyline(coords, {color: 'blue', weight: 5}).addTo(map);
+
+        if(coords.length > 0){
+            startMarker = L.marker(coords[0], {icon: L.icon({iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png'})}).addTo(map).bindPopup("Start");
+            currentMarker = L.marker(coords[coords.length-1], {icon: L.icon({iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png'})}).addTo(map).bindPopup("Current");
+        }
+    }
+
+    function updateVessel(coords){
+        if(vessel) map.removeLayer(vessel)
+        
+        if(coords.length > 0){
+            vessel = L.marker(coords[0], {icon: L.icon({iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/ferry.png'})}).addTo(map).bindPopup("Vessel");
+        }
+    }
+
+    function updatefreRoute(coords){
+        if(fre_route) map.removeLayer(fre_route)
+
+        fre_route = L.polyline(coords, {color: 'gray', weight: 5, opacity:0.4}).addTo(map);
+    }
+
+</script>
+</body>
+</html>
