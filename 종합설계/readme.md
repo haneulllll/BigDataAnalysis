@@ -29,6 +29,21 @@
 
 <img width="840" alt="시퀀스다이어그램" src="https://github.com/user-attachments/assets/d2769789-8084-44a5-9a6a-1936328883e7" />
 
+
 모델 아키텍처
 -----
 ![image](https://github.com/user-attachments/assets/f9deffb9-2729-425c-9f08-ef4dc48ae501)
+
+
+모델 테스트
+-----
+![image](https://github.com/user-attachments/assets/e4a0c4d1-3046-46e9-8ea9-ac7e2f7f1445)
+
+
+데모 테스트
+-----
+(1) 초기 실행 화면
+![image](https://github.com/user-attachments/assets/1224dad4-478d-46d1-81fa-49d3267e17cc)
+
+(2) 경로 생성 완료 화면
+![image](https://github.com/user-attachments/assets/6baad37d-60ee-446e-acf0-12659cf9d017)
