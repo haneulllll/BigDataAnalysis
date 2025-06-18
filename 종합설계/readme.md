@@ -28,3 +28,7 @@
 -----
 
 <img width="840" alt="시퀀스다이어그램" src="https://github.com/user-attachments/assets/d2769789-8084-44a5-9a6a-1936328883e7" />
+
+모델 아키텍처
+-----
+![image](https://github.com/user-attachments/assets/f9deffb9-2729-425c-9f08-ef4dc48ae501)
